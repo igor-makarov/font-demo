@@ -3,6 +3,11 @@
   src: url("fonts/Carlito-Regular.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "Carlito 1.5x";
+  src: url("fonts/Carlito-LineHeight-150.ttf") format("truetype");
+}
+
 html {
   font-family: "Carlito", sans-serif;
 }
@@ -17,6 +22,10 @@ h1 + p {
 
 h2 {
   font-size: 1.75rem;
+}
+
+.adjusted-font {
+  font-family: "Carlito 1.5x", sans-serif;
 }
 
 body {

@@ -1,18 +1,21 @@
 [settings]
 lockfile = true
 lockfile_platforms = ["macos-arm64", "linux-arm64"]
+python.uv_venv_auto = "source"
 
 [tools]
 node = "lts"
 pandoc = "latest"
+python = "3.14"
+uv = "latest"
 
 [tasks.build]
 description = "Build the font rendering demo webpage"
 run = "./build.sh"
 
 [tasks.clean]
-description = "Remove the generated site"
-run = "rm -rf site"
+description = "Remove generated files"
+run = "rm -rf .build site"
 
 [tasks.install]
 description = "Install frontend dependencies"
