@@ -1,0 +1,26 @@
+[settings]
+lockfile = true
+lockfile_platforms = ["macos-arm64", "linux-arm64"]
+
+[tools]
+node = "lts"
+pandoc = "latest"
+
+[tasks.build]
+description = "Build the font rendering demo webpage"
+run = "./build.sh"
+
+[tasks.clean]
+description = "Remove the generated site"
+run = "rm -rf site"
+
+[tasks.install]
+description = "Install frontend dependencies"
+run = "npm ci"
+sources = ["package.json", "package-lock.json"]
+outputs = ["node_modules/.package-lock.json"]
+
+[tasks.preview]
+description = "Build, watch, and serve the site at http://localhost:3000"
+depends = ["build", "install"]
+run = "npm run preview"

@@ -1,0 +1,27 @@
+@font-face {
+  font-family: "Carlito";
+  src: url("fonts/Carlito-Regular.ttf") format("truetype");
+}
+
+html {
+  font-family: "Carlito", sans-serif;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h1 + p {
+  display: none;
+}
+
+h2 {
+  font-size: 1.75rem;
+}
+
+body {
+  max-width: 42rem;
+  font-size: 1.25rem;
+  margin: 10vh auto;
+  padding: 0 1.5rem;
+}

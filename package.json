@@ -1,0 +1,11 @@
+{
+  "name": "font-demo",
+  "private": true,
+  "scripts": {
+    "preview": "./preview.sh"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "serve": "^14.2.6"
+  }
+}

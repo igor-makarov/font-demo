@@ -1,0 +1,44 @@
+name: Build and publish font demo
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: font-demo-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up tools with mise
+        uses: jdx/mise-action@v4
+        with:
+          install: true
+          cache: true
+
+      - name: Build site
+        run: mise run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - name: Deploy site
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
