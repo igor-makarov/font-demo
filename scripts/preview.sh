@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 serve site &
 server_pid=$!
@@ -12,4 +12,4 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-chokidar README.md style.css 'fonts/**/*' --command './build.sh'
+chokidar README.md style.css 'fonts/**/*' --command './scripts/build.sh'

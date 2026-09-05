@@ -11,7 +11,7 @@ uv = "latest"
 
 [tasks.build]
 description = "Build the font rendering demo webpage"
-run = "./build.sh"
+run = "./scripts/build.sh"
 
 [tasks.clean]
 description = "Remove generated files"

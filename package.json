@@ -2,7 +2,7 @@
   "name": "font-demo",
   "private": true,
   "scripts": {
-    "preview": "./preview.sh"
+    "preview": "./scripts/preview.sh"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0",
