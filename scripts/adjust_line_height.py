@@ -1,47 +1,79 @@
 #!/usr/bin/env python3
 
+"""Create a copy of a font with proportionally larger line spacing.
+
+A font's recommended line height is the distance from its ascender to its
+(usually negative) descender, plus a line gap:
+
+    line height = ascender - descender + line gap
+
+This script keeps the ascender and descender unchanged and adjusts only the
+line gap. It updates both sets of vertical metrics that applications commonly
+read from OpenType fonts.
+"""
+
 import argparse
+
 from fontTools.ttLib import TTFont
 
 
-def new_line_gap(ascent, descent, old_gap, factor):
-    # descent is normally negative
-    current_height = ascent - descent + old_gap
-    target_height = current_height * factor
-
-    # Keep ascent/descent unchanged; put all extra space into lineGap
-    return round(target_height - (ascent - descent))
+DEFAULT_SCALE_FACTOR = 1.5
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input")
-    parser.add_argument("output")
-    parser.add_argument("--factor", type=float, default=1.5)
-    args = parser.parse_args()
+def scaled_line_gap(
+    ascender: int,
+    descender: int,
+    line_gap: int,
+    scale_factor: float,
+) -> int:
+    """Calculate the line gap needed to scale the total line height."""
+    text_height = ascender - descender
+    current_line_height = text_height + line_gap
+    target_line_height = current_line_height * scale_factor
 
-    font = TTFont(args.input)
+    return round(target_line_height - text_height)
 
-    # hhea metrics
-    hhea = font["hhea"]
-    hhea.lineGap = new_line_gap(
-        hhea.ascent,
-        hhea.descent,
-        hhea.lineGap,
-        args.factor,
+
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input_font", help="font file to read")
+    parser.add_argument("output_font", help="adjusted font file to create")
+    parser.add_argument(
+        "--factor",
+        dest="scale_factor",
+        type=float,
+        default=DEFAULT_SCALE_FACTOR,
+        help=f"line-height multiplier (default: {DEFAULT_SCALE_FACTOR})",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    arguments = parse_arguments()
+    font = TTFont(arguments.input_font)
+
+    # The hhea table contains the horizontal layout metrics used by many
+    # applications, despite its name.
+    horizontal_metrics = font["hhea"]
+    horizontal_metrics.lineGap = scaled_line_gap(
+        horizontal_metrics.ascent,
+        horizontal_metrics.descent,
+        horizontal_metrics.lineGap,
+        arguments.scale_factor,
     )
 
-    # OS/2 typographic metrics
+    # The OS/2 table has a second set of typographic vertical metrics. It is
+    # optional, so update it only when the input font provides it.
     if "OS/2" in font:
-        os2 = font["OS/2"]
-        os2.sTypoLineGap = new_line_gap(
-            os2.sTypoAscender,
-            os2.sTypoDescender,
-            os2.sTypoLineGap,
-            args.factor,
+        typographic_metrics = font["OS/2"]
+        typographic_metrics.sTypoLineGap = scaled_line_gap(
+            typographic_metrics.sTypoAscender,
+            typographic_metrics.sTypoDescender,
+            typographic_metrics.sTypoLineGap,
+            arguments.scale_factor,
         )
 
-    font.save(args.output)
+    font.save(arguments.output_font)
 
 
 if __name__ == "__main__":
